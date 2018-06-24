@@ -1,0 +1,8 @@
+{
+  "name": "headless-chrome",
+  "version": "0.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "chrome-launcher": "^0.10.2"
+  }
+}
