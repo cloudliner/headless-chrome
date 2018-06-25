@@ -1,5 +1,5 @@
 import express = require('express');
-const chromeLauncher = require('chrome-launcher');
+import puppeteer = require('puppeteer');
 
 const server = express();
 const portNumber = 8080;
@@ -13,19 +13,14 @@ server.get("/", defaultListener);
 
 function runListener(request: express.Request, response: express.Response) {
   console.log('Launch Chrome');
-  chromeLauncher.launch({
-    startingUrl: `http://localhost:${portNumber}/`,
-    chromeFlags: ['--headless', '--disable-gpu']
-  }).then((chrome: any) => {
-    console.log(`Chrome debugging port running on ${chrome.port}`);
-    setTimeout(() => {
-      chrome.kill()
-        .then(() => {
-          console.log('Kill Chrome');
-          response.send('Launch Chrome');
-        });
-    }, 3000);
-  });
+  (async() => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(`http://localhost:${portNumber}/`);
+    console.log('Close Chrome');
+    await browser.close();
+    response.send('Launch Chrome');
+  })();
 }
 
 server.get("/run", runListener);
